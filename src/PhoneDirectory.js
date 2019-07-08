@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import AddSubscriber from './AddSubscriber';
 import ShowSubscriber from './ShowSubscriber';
+import {BrowserRouter as Router,Route} from 'react-router-dom';
 
 class PhoneDirectory extends Component{
 
@@ -37,10 +38,35 @@ class PhoneDirectory extends Component{
         console.log(this.state.subscriberList);
     }
 
+    deleteSubscriber=(subscriberID)=>{
+        let subList=this.state.subscriberList;
+        let subIndex=0;
+
+        subList.forEach(function(subscriber,index){
+            if(subscriberID===subscriber.id){
+                subIndex=index;
+            }
+        },this);
+
+        let newSubList=subList;
+        newSubList.splice(subIndex,1);
+        this.setState({subscriberList:newSubList});
+    }
+
     render(){
         return(
             // <AddSubscriber addNewSubscriber={this.addSubscriber}/>
-            <ShowSubscriber subscriberList={this.state.subscriberList}/>
+            // <ShowSubscriber subscriberList={this.state.subscriberList}/>
+            <Router>
+                <Route
+                exact path="/"
+                render={(props)=><ShowSubscriber{...props} deleteSubscriberHandler={this.deleteSubscriber} subscriberList={this.state.subscriberList}/>}
+                />
+                <Route
+                exact path="/add"
+                render={({history},props)=><AddSubscriber{...props} history={history} addNewSubscriber={this.addSubscriber}/>}
+                />
+            </Router>
         );
     }
 }
